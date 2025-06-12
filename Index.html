@@ -1,0 +1,651 @@
+// Lamkhantar Mohamed
+
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Calcul Mental</title>
+
+    <style>
+
+        body {
+
+            font-family: 'Segoe UI', Arial, sans-serif;
+
+            background: #f5f6fa;
+
+            margin: 0;
+
+            padding: 0;
+
+        }
+
+        .app-container {
+
+            max-width: 400px;
+
+            margin: 40px auto;
+
+            background: #fff;
+
+            border-radius: 16px;
+
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+
+            padding: 32px 24px 24px 24px;
+
+        }
+
+        .app-header {
+
+            text-align: center;
+
+            margin-bottom: 24px;
+
+        }
+
+        .app-title {
+
+            font-size: 2rem;
+
+            color: #273c75;
+
+            margin-bottom: 8px;
+
+        }
+
+        .app-description {
+
+            color: #636e72;
+
+            font-size: 1rem;
+
+        }
+
+        .btn-container {
+
+            text-align: center;
+
+            margin-top: 24px;
+
+        }
+
+        .btn {
+
+            padding: 12px 32px;
+
+            font-size: 1rem;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #4078c0;
+
+            color: #fff;
+
+            cursor: pointer;
+
+            transition: background 0.2s;
+
+        }
+
+        .btn:hover {
+
+            background: #274b7a;
+
+        }
+
+        .screen {
+
+            display: none;
+
+        }
+
+        .screen.active {
+
+            display: block;
+
+        }
+
+        .stats {
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 32px;
+
+            margin-bottom: 16px;
+
+        }
+
+        .stat {
+
+            text-align: center;
+
+        }
+
+        .stat-value {
+
+            font-size: 1.3rem;
+
+            font-weight: bold;
+
+            color: #4078c0;
+
+        }
+
+        .stat-label {
+
+            font-size: 0.9rem;
+
+            color: #636e72;
+
+        }
+
+        .progress-container {
+
+            background: #e1e7ed;
+
+            border-radius: 8px;
+
+            height: 12px;
+
+            margin-bottom: 24px;
+
+            overflow: hidden;
+
+        }
+
+        .progress-bar {
+
+            height: 100%;
+
+            width: 0%;
+
+            background: linear-gradient(90deg, #4078c0 60%, #00b894 100%);
+
+            transition: width 0.4s;
+
+        }
+
+        .math-question {
+
+            font-size: 1.5rem;
+
+            text-align: center;
+
+            margin-bottom: 16px;
+
+            color: #222f3e;
+
+        }
+
+        .answer-input {
+
+            display: block;
+
+            margin: 0 auto 12px auto;
+
+            padding: 10px 16px;
+
+            font-size: 1.1rem;
+
+            border: 1px solid #b2bec3;
+
+            border-radius: 6px;
+
+            width: 120px;
+
+            text-align: center;
+
+            outline: none;
+
+            transition: border 0.2s;
+
+        }
+
+        .answer-input:focus {
+
+            border: 1.5px solid #4078c0;
+
+        }
+
+        .feedback {
+
+            text-align: center;
+
+            font-size: 1.1rem;
+
+            margin-bottom: 8px;
+
+            min-height: 24px;
+
+            color: #636e72;
+
+        }
+
+        .feedback.correct {
+
+            color: #00b894;
+
+            font-weight: bold;
+
+        }
+
+        .feedback.incorrect {
+
+            color: #e17055;
+
+            font-weight: bold;
+
+        }
+
+        .result-score {
+
+            text-align: center;
+
+            font-size: 2.2rem;
+
+            color: #4078c0;
+
+            font-weight: bold;
+
+            margin-bottom: 12px;
+
+        }
+
+        .result-message {
+
+            text-align: center;
+
+            font-size: 1.1rem;
+
+            color: #636e72;
+
+            margin-bottom: 24px;
+
+        }
+
+        @media (max-width: 500px) {
+
+            .app-container {
+
+                padding: 16px 4px 16px 4px;
+
+            }
+
+            .math-question {
+
+                font-size: 1.2rem;
+
+            }
+
+            .btn {
+
+                width: 100%;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <!-- Écran d'accueil -->
+
+        <div class="screen welcome-screen active">
+
+            <div class="app-header">
+
+                <h1 class="app-title">Calcul Mental</h1>
+
+                <p class="app-description">Testez vos compétences en calcul mental avec 10 additions aléatoires.</p>
+
+            </div>
+
+            <div class="btn-container">
+
+                <button id="start-btn" class="btn btn-primary">Commencer</button>
+
+            </div>
+
+        </div>
+
+        
+
+        <!-- Écran de jeu -->
+
+        <div class="screen game-screen">
+
+            <div class="stats">
+
+                <div class="stat">
+
+                    <div class="stat-value" id="current-question">1</div>
+
+                    <div class="stat-label">Question</div>
+
+                </div>
+
+            </div>
+
+            
+
+            <div class="progress-container">
+
+                <div class="progress-bar" id="progress-bar"></div>
+
+            </div>
+
+            
+
+            <div class="math-question" id="question-display">15 + 22 = </div>
+
+            
+
+            <input type="number" class="answer-input" id="answer-input" placeholder="?">
+
+            
+
+            <div class="feedback" id="feedback"></div>
+
+            
+
+            <div class="btn-container">
+
+                <button id="submit-btn" class="btn btn-primary">Valider</button>
+
+            </div>
+
+        </div>
+
+        
+
+        <!-- Écran des résultats -->
+
+        <div class="screen result-screen">
+
+            <div class="app-header">
+
+                <h1 class="app-title">Résultats</h1>
+
+            </div>
+
+            
+
+            <div class="result-score" id="final-score">7/10</div>
+
+            
+
+            <div class="btn-container">
+
+                <button id="restart-btn" class="btn btn-primary">Rejouer</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <script>
+
+        // Variables globales
+
+        let score = 0;
+
+        let currentQuestion = 1;
+
+        let correctAnswer = 0;
+
+        const totalQuestions = 10;
+
+        
+
+        // Éléments DOM
+
+        const welcomeScreen = document.querySelector('.welcome-screen');
+
+        const gameScreen = document.querySelector('.game-screen');
+
+        const resultScreen = document.querySelector('.result-screen');
+
+        const startBtn = document.getElementById('start-btn');
+
+        const submitBtn = document.getElementById('submit-btn');
+
+        const restartBtn = document.getElementById('restart-btn');
+
+        const questionDisplay = document.getElementById('question-display');
+
+        const answerInput = document.getElementById('answer-input');
+
+        const currentQuestionDisplay = document.getElementById('current-question');
+
+        const finalScoreDisplay = document.getElementById('final-score');
+
+        const appreciationDisplay = document.getElementById('appreciation');
+
+        const feedbackDisplay = document.getElementById('feedback');
+
+        const progressBar = document.getElementById('progress-bar');
+
+        
+
+        // Fonction pour démarrer le jeu
+
+        function startGame() {
+
+            welcomeScreen.classList.remove('active');
+
+            gameScreen.classList.add('active');
+
+            resultScreen.classList.remove('active');
+
+            
+
+            // Réinitialiser les variables
+
+            score = 0;
+
+            currentQuestion = 1;
+
+            
+
+            // Mettre à jour l'affichage
+
+            currentQuestionDisplay.textContent = currentQuestion;
+
+            feedbackDisplay.textContent = '';
+
+            feedbackDisplay.className = 'feedback';
+
+            updateProgressBar();
+
+            
+
+            // Générer la première question
+
+            generateQuestion();
+
+        }
+
+        
+
+        // Fonction pour générer une question aléatoire
+
+        function generateQuestion() {
+
+            const num1 = Math.floor(Math.random() * 50) + 1;
+
+            const num2 = Math.floor(Math.random() * 50) + 1;
+
+            correctAnswer = num1 + num2;
+
+            
+
+            displayQuestion(num1, num2);
+
+        }
+
+        
+
+        // Fonction pour afficher la question
+
+        function displayQuestion(num1, num2) {
+
+            questionDisplay.textContent = `${num1} + ${num2} = `;
+
+            answerInput.value = '';
+
+            answerInput.focus();
+
+            feedbackDisplay.textContent = '';
+
+        }
+
+        
+
+        // Fonction pour soumettre une réponse
+
+        function submitAnswer() {
+
+            const userAnswer = parseInt(answerInput.value);
+
+            
+
+            if(isNaN(userAnswer)) {
+
+                feedbackDisplay.textContent = "Veuillez entrer un nombre valide";
+
+                feedbackDisplay.className = 'feedback incorrect';
+
+                return;
+
+            }
+
+            
+
+            // Vérifier la réponse
+
+            if(userAnswer === correctAnswer) {
+
+                score++;
+
+                feedbackDisplay.textContent = "Correct ! 👍";
+
+                feedbackDisplay.className = 'feedback correct';
+
+            } else {
+
+                feedbackDisplay.textContent = `Incorrect. La réponse était ${correctAnswer}`;
+
+                feedbackDisplay.className = 'feedback incorrect';
+
+            }
+
+            
+
+            // Passer à la question suivante
+
+            prepareNextQuestion();
+
+        }
+
+        
+
+        // Fonction pour préparer la question suivante
+
+        function prepareNextQuestion() {
+
+            currentQuestion++;
+
+            
+
+            if(currentQuestion > totalQuestions) {
+
+                setTimeout(showResults, 1000);
+
+            } else {
+
+                currentQuestionDisplay.textContent = currentQuestion;
+
+                updateProgressBar();
+
+                setTimeout(generateQuestion, 1000);
+
+            }
+
+        }
+
+        
+
+        // Fonction pour mettre à jour la barre de progression
+
+        function updateProgressBar() {
+
+            const progress = ((currentQuestion - 1) / totalQuestions) * 100;
+
+            progressBar.style.width = `${progress}%`;
+
+        }
+
+        
+
+        // Fonction pour afficher les résultats
+
+        function showResults() {
+
+            gameScreen.classList.remove('active');
+
+            resultScreen.classList.add('active');
+
+            
+
+            finalScoreDisplay.textContent = `${score}/${totalQuestions}`; 
+
+        }
+
+        
+
+        // Écouteurs d'événements
+
+        startBtn.addEventListener('click', startGame);
+
+        submitBtn.addEventListener('click', submitAnswer);
+
+        restartBtn.addEventListener('click', startGame);
+
+        
+
+        // Permettre la soumission avec la touche Entrée
+
+        answerInput.addEventListener('keypress', function(e) {
+
+            if(e.key === 'Enter') {
+
+                submitAnswer();
+
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>
